@@ -1,1 +1,6 @@
-{}
+{
+    "particle.firmwareVersion": "5.3.0",
+    "particle.targetPlatform": "argon",
+    "C_Cpp.errorSquiggles": "Disabled",
+    "particle.targetDevice": "e00fce682b826ba6aeb175d8"
+}
