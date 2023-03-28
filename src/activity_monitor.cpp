@@ -18,8 +18,8 @@
 // Application includes
 //------------------------------------------------------------------------------
 #include "activity_monitor.h"
-#include "accmtr_hal.h"
 #include "debug.h"
+#include "filesystem.h" // for recording data
 
 //------------------------------------------------------------------------------
 // Data types
@@ -33,7 +33,6 @@ accmtr_sample_t m_latest_samples[50];
 //------------------------------------------------------------------------------
 // Private function declarations
 //------------------------------------------------------------------------------
-void print_sample(accmtr_sample_t sample);
 
 ///////////////////////////////////////////////////////////////////////////////
 // Public Function Definitions
@@ -44,14 +43,18 @@ void activity_loop(void)
   accmtr_sample_t sample;
   if (get_next_sample(&sample)) // should burst 25 samples every .5 seconds
   {
+    if (!activate_file(FILE_ACCMTR_SAMPLE, FILE_ACCESS_TYPE_READ_WRITE))
+    {
+        TERM_crt("Failed to open accmtr file for writing");
+    }
+    if (!append_active_file(&sample, sizeof(sample)))
+    {
+        TERM_crt("Failed to write accmtr sample");
+    }
     // TODO: actually 
-    print_sample(sample);
+    //print_sample(sample);
   }
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// Private Function Definitions
-///////////////////////////////////////////////////////////////////////////////
 
 void print_sample(accmtr_sample_t _sample)
 {
@@ -100,3 +103,7 @@ void print_sample(accmtr_sample_t _sample)
   double mag = sqrt(x*x+y*y+z*z);
   TERM_crt("%s mag=%lf, x=%lf y=%lf z=%lf", buf, mag, x, y, z);
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// Private Function Definitions
+///////////////////////////////////////////////////////////////////////////////

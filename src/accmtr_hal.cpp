@@ -181,9 +181,11 @@ void accmtr_loop(void)
     {
         m_interrupted = false;
         uint8_t num_samples = num_fifo_samples();
+        accmtr_sample_t sample;
         for(uint8_t i=0; i<num_samples; i++)
         {
-            m_samples[(m_samples_i++ + NUM_SAMPLES) % NUM_SAMPLES] = read_sample();
+            sample = read_sample();
+            memcpy(&m_samples[(m_samples_i++ + NUM_SAMPLES) % NUM_SAMPLES], &sample, sizeof(sample));
             if (m_samples_i >= NUM_SAMPLES)
             {
                 m_samples_i = 0;
